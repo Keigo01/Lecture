@@ -1,0 +1,647 @@
+Script started on Thu Apr 14 14:11:19 2016
+exp088[1]% truss -c hatten2[K[K[K[K[K[K[K ./hatten2
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     seconds   calls  errors
+readlink                0.000020952       1       1
+lseek                   0.000011733       1       0
+mmap                    0.000343898      11       0
+close                   0.000059784       3       0
+fstat                   0.000049168       3       0
+lstat                   0.000143593       6       1
+write                   0.000363454       1       0
+ioctl                   0.000012851       1       0
+access                  0.000018717       1       0
+sigprocmask             0.000212036      12       0
+munmap                  0.000135493       6       0
+read                    0.000364012       2       0
+                      ------------- ------- -------
+                        0.001735691      48       2
+exp088[2]% truss -c ./hatten2-2
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000022070       1       1
+lseek                   0.000011174       1       0
+mmap                    0.000277409      11       0
+close                   0.000054196       3       0
+fstat                   0.000067327       3       0
+lstat                   0.000150298       6       1
+write                   0.043763662     100       0
+ioctl                   0.000013409       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000270428      12       0
+munmap                  0.000088280       6       0
+read                    0.000383010       2       0
+                      ------------- ------- -------
+                        0.045119701     147       2
+exp088[3]% truss -c ./hatten2-2[K3
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     seconds   calls  errors
+readlink                0.000026819       1       1
+lseek                   0.000014807       1       0
+mmap                    0.000176000      10       0
+close                   0.000053637       3       0
+fstat                   0.000038551       2       0
+lstat                   0.000146109       6       1
+write                   0.013855122     100       0
+access                  0.000018438       1       0
+sigprocmask             0.000367364      12       0
+munmap                  0.000086604       6       0
+read                    0.000412622       2       0
+                      ------------- ------- -------
+                        0.015196073     144       2
+exp088[4]% truss -c ./hatten2-3[K4
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000022350       1       1
+lseek                   0.000012013       1       0
+mmap                    0.000177959      10       0
+close                   0.000056153       3       0
+fstat                   0.000051123       2       0
+lstat                   0.000171531       6       1
+write                   0.006791093     100       0
+access                  0.000019276       1       0
+sigprocmask             0.000296407      12       0
+munmap                  0.000129905       6       0
+read                    0.000381613       2       0
+                      ------------- ------- -------
+                        0.008109423     144       2
+exp088[5]% exit
+exit
+
+Script done on Thu Apr 14 14:11:45 2016
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000020953       1       1
+lseek                   0.000011734       1       0
+mmap                    0.000191924      11       0
+close                   0.000054476       3       0
+fstat                   0.000068166       3       0
+lstat                   0.000201144       6       1
+write                   0.035784160     100       0
+ioctl                   0.000012571       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000255340      12       0
+munmap                  0.000096660       6       0
+read                    0.000410388       2       0
+                      ------------- ------- -------
+                        0.037125954     147       2
+exp088[52]% truss -c ./hatten2-2[20D[Kscript
+Script started, output file is typescript
+exp088[1]% truss -c hatten2[K[K[K[K[K[K[K ./hatten2
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     seconds   calls  errors
+readlink                0.000020952       1       1
+lseek                   0.000011733       1       0
+mmap                    0.000343898      11       0
+close                   0.000059784       3       0
+fstat                   0.000049168       3       0
+lstat                   0.000143593       6       1
+write                   0.000363454       1       0
+ioctl                   0.000012851       1       0
+access                  0.000018717       1       0
+sigprocmask             0.000212036      12       0
+munmap                  0.000135493       6       0
+read                    0.000364012       2       0
+                      ------------- ------- -------
+                        0.001735691      48       2
+exp088[2]% truss -c ./hatten2-2
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000022070       1       1
+lseek                   0.000011174       1       0
+mmap                    0.000277409      11       0
+close                   0.000054196       3       0
+fstat                   0.000067327       3       0
+lstat                   0.000150298       6       1
+write                   0.043763662     100       0
+ioctl                   0.000013409       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000270428      12       0
+munmap                  0.000088280       6       0
+read                    0.000383010       2       0
+                      ------------- ------- -------
+                        0.045119701     147       2
+exp088[3]% truss -c ./hatten2-2[K3
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     seconds   calls  errors
+readlink                0.000026819       1       1
+lseek                   0.000014807       1       0
+mmap                    0.000176000      10       0
+close                   0.000053637       3       0
+fstat                   0.000038551       2       0
+lstat                   0.000146109       6       1
+write                   0.013855122     100       0
+access                  0.000018438       1       0
+sigprocmask             0.000367364      12       0
+munmap                  0.000086604       6       0
+read                    0.000412622       2       0
+                      ------------- ------- -------
+                        0.015196073     144       2
+exp088[4]% truss -c ./hatten2-3[K4
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000022350       1       1
+lseek                   0.000012013       1       0
+mmap                    0.000177959      10       0
+close                   0.000056153       3       0
+fstat                   0.000051123       2       0
+lstat                   0.000171531       6       1
+write                   0.006791093     100       0
+access                  0.000019276       1       0
+sigprocmask             0.000296407      12       0
+munmap                  0.000129905       6       0
+read                    0.000381613       2       0
+                      ------------- ------- -------
+                        0.008109423     144       2
+exp088[5]% 

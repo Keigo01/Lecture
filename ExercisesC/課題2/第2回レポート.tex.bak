@@ -1,0 +1,167 @@
+\documentclass[a4j]{class}
+\usepackage{moreverb}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{url}
+\usepackage{here}
+\usepackage{listings}
+
+\title{第2回レポート} % 課題名
+\author{内藤 圭吾}                      % 提出者名
+\date{2015年1月28日}                     % 提出日
+\担当教員{内山　彰}           % 担当教官名. 
+\所属{ソフトウェア科学コース}           % 自分の所属するコース名などを指定する. 
+\学年{2年}                              % 学年
+\学籍番号{09B14049}                     % 学籍番号
+\email{u434666c@ics.osaka-u.ac.jp}   % 電子メールのアドレス
+\begin{document}
+\maketitle
+\section{クライアントの作成}
+\subsection{プログラムの説明}
+まず、echo\_serverと同様にソケットを生成する。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+if ((sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0) {
+    perror("socket");
+    exit(1);
+}
+\end{lstlisting}
+
+次に接続するサーバーの情報を構造体に格納し、そのサーバーに接続する。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+bzero(&svr,sizeof(svr));
+svr.sin_family=AF_INET;
+svr.sin_port=htons(PORT);
+if ( ( cp = gethostbyname(argv[1]) ) == NULL ) {
+   fprintf(stderr,"unknown server %s\n",argv[1]);
+   exit(1);
+}
+bcopy(cp->h_addr,&svr.sin_addr,cp->h_length);
+
+connect(so9ck,&svr,sizeof(svr));
+\end{lstlisting}
+
+次に、標準入力から読み込み、パケットの送信を行う。標準入力から読み込む際、その文字列がEOFであるとき、つまりread関数の戻り値が0であったときはプログラムを終了する。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+bzero( buf , sizeof( buf ) ) ;
+
+if ( read(0,buf,sizeof(buf) ) == 0 ){
+ 　break ;
+}
+
+write(sock,buf,sizeof(buf));
+\end{lstlisting}
+
+最後にサーバーからメッセージを受信し、読み込み、標準出力へ書き込む。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+if ( ( nbytes =read(sock,rbuf,sizeof(rbuf))) < 0) 
+	perror("read");
+} else {	
+	write(1,	rbuf,	sizeof(rbuf));
+}
+\end{lstlisting}
+
+この操作をwhile文で繰り返すことで、繰り返しパケットを送信する。
+以上の方法でプログラムを実現した。
+
+\subsection{実行結果}
+\includegraphics[width = 15cm]{kadai1}
+
+\subsection{考察}
+正しく送ったメッセージが帰ってきていることが分かる。また、EOFを読み込むとその時点で接続を切ってプログラムを終了しているので、正しく動作していることが分かる。
+
+\section{簡易talkの作成}
+\subsection{プログラムの説明}
+echo\_clientと同様にソケットを生成し、接続先の情報を設定し、接続する。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+if ((sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP))<0) {
+    perror("socket");
+    exit(1);
+  }
+  
+  bzero(&svr,sizeof(svr));
+  svr.sin_family=AF_INET;
+  svr.sin_port=htons(PORT);
+  if ( ( cp = gethostbyname(argv[1]) ) == NULL ) {
+    fprintf(stderr,"unknown server %s\n",argv[1]);
+    exit(1);
+  }
+  bcopy(cp->h_addr,&svr.sin_addr,cp->h_length);
+  
+  connect(sock,&svr,sizeof(svr));
+\end{lstlisting}
+
+サーバーと同様にselect関数を用いて標準入力とソケットを監視する。いずれかに入力があった場合の処理はechoclientと同様である。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+if(select(sock+1,&rfds,NULL,NULL,&tv)>0) {
+    if(FD_ISSET(0,&rfds)) { 
+      read(0,buf,sizeof(buf));
+      write(sock,buf,sizeof(buf));
+      bzero(buf,sizeof(buf));
+    }
+    if(FD_ISSET(sock,&rfds)) { 
+      read(sock,buf,sizeof(buf));
+      write(0,buf,sizeof(buf));
+      bzero(buf,sizeof(buf));
+      }
+}
+\end{lstlisting}
+
+\subsection{実行結果}
+\includegraphics[width = 15cm]{kadai2}
+
+\subsection{考察}
+発言順が交互以外であっても正しい順で表示され、受信した相手のメッセージの標準出力への反映するタイミングも正しいので、このプログラムが正しく動作していることが分かる。
+
+\section{拡張課題}
+
+\subsection{拡張課題1}
+\subsubsection{実行結果}
+\includegraphics[width = 15cm]{lower}
+
+\subsubsection{考察}
+このプログラムの実現には、echoserverがclientからメッセージを受け取った際に、その各文字について、小文字へと変換する関数"tolower(char)"を実行し、その文字列を元の配列に格納することで実現することができた。このときに使用する関数を"tolower(char)"から"atoi(str)"や"atof(str)"等に変えることで、文字列を送信することで、それに対応する数値を返すプログラムを作ることも可能である。また、今回は関数を用いて実現したが、文字コードを操作することでも実現することができる。その場合、大文字に対して32を加えることで小文字へと変換することができる。
+
+\subsection{拡張課題3}
+\subsubsection{実行結果}
+実行結果は2章の実行結果に順ずる。\\
+
+\subsubsection{考察}
+メッセージを送信する際に、自身の名前を最初に付加したものを送ることで機能の実現をした。
+改善点としては、現在文字列を受信した際に、その文字列の発言者の名前を表示するだけで、こちら側が発言する際に、自身の名前が表示されてはいない。この改善方法としては、標準出力に文字列を出力した後、次の行に自身の名前を表示し、文字列の入力を待つ。その状態で、ソケットから文字列を受信したら、まず標準出力に"空白 + \textbackslash r " を出力する。こうすることで行頭 にカーソル位置を戻し、なおかつ現在標準出力に書き込まれている内容を削除する。空白の数はプログラムで想定している最大文字数1024文字にするのがよいと思われる。その後は、現在のプログラムと同様にソケットから文字列を読み込み標準出力に表示することで、実現できる。
+
+\subsection{拡張課題4}
+\subsubsection{実行結果}
+\includegraphics[width = 15cm]{twoclient}
+
+\subsubsection{考察}
+プログラムの実現は、simple-talk-serverでは、受け取った文字列を標準出力に表示していたが、その部分を、もう一方のクライアントへの送信に書き換えることで実現した。今回は以下のように受け付けるクライアント数が2で実装した。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+if ( ( csock = accept(sock,(struct sockaddr *)&clt,(socklen_t*)&clen) ) <0 ) {
+    perror("accept");
+    exit(2);
+  }
+
+  if ( ( csock2 = accept(sock,(struct sockaddr *)&clt2,(socklen_t*)&clen) ) <0 ) {
+    perror("accept");
+    exit(2);
+  }
+\end{lstlisting}
+しかし、このcsockを増やしていくことで、3人以上のグループチャットの実装ができる。その際も、名前の表示を行うことで実用に耐えうるグループチャットの実装ができると考えられる。csockを増やした場合もselect関数の中の処理はcsock、csock2と同様のものでよいが、select関数の第一引数は加えたcsockの値を全て足し合わせる。
+
+\subsection{拡張課題5}
+\subsubsection{実行結果}
+\includegraphics[width = 15cm]{broadcast}
+
+\subsubsection{考察}
+実現には、udp\_sendで送り先のipアドレスをinet\_aton関数を用いて、"192.168.16.255"に指定し、さらにsetsockopt関数でSOL\_SOCKETとSO\_BROADCASTを設定することで実現した。
+今回はオプションとしてSO\_BROADCASTを設定したがオプションは他にもあり、それらを用いることでさまざまな付加機能をつけることができる。
+例えば、SO\_SNDTIMEOオプションを用いると、サーバーがクライアントからの接続を待ち、一定時間接続が無かった場合、タイムアウトしてプログラムを終了する、といった機能をつけることができる。
+
+\subsection{拡張課題6}
+\subsubsection{実行結果}
+\includegraphics[width = 15cm]{simple_udp}
+
+\subsubsection{考察}
+今回はごく単純な最低限の仕様で実現したがTCPでの簡易talkと同様の付加機能(名前の表示等)をつけるのは、同じ手法で実現できると考えられる。また、twoclientserverと同様の機能をudp\_reseiveの受け取ったときの処理を付け加えることでUDPでも実現できると考えられる。付け加える処理についても、twoclientserverと同様で、受け取った文字列を他方のソケットへ書き込むことで実装できると考えられる。
+
+\end{document}

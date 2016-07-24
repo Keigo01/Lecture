@@ -1,0 +1,291 @@
+\section{課題1-1}
+\subsection{}
+pingコマンドは引数として渡されたホスト名またはIPアドレスとのパケットの送受信ができるかどうかを調べることができるコマンドである。演習室のPCで実行したところ以下の結果が得られた。
+
+\begin{verbatim}
+$ ping exp101
+PING exp101.exp.ics.es.osaka-u.ac.jp (192.168.16.101): 56 data bytes
+ping: sendto: Host is down
+ping: sendto: Host is down
+--- exp101.exp.ics.es.osaka-u.ac.jp ping statistics ---
+7 packets transmitted, 0 packets received, 100.0% packet loss
+
+
+$ ping exp101
+PING exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201): 56 data bytes
+64 bytes from 192.168.16.201: icmp_seq=0 ttl=64 time=1.012 ms
+64 bytes from 192.168.16.201: icmp_seq=1 ttl=64 time=0.402 ms
+64 bytes from 192.168.16.201: icmp_seq=2 ttl=64 time=0.647 ms
+64 bytes from 192.168.16.201: icmp_seq=3 ttl=64 time=0.431 ms
+64 bytes from 192.168.16.201: icmp_seq=4 ttl=64 time=0.415 ms
+^C
+--- exp201.exp.ics.es.osaka-u.ac.jp ping statistics ---
+5 packets transmitted, 5 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.402/0.581/1.012/0.233 ms
+\end{verbatim}
+
+pingの引数としてexp101を指定したとき、”Host is down”と帰ってきているので、指定したホストが現在パケットの送受信ができないことを示している。また、引数としてexp201を指定したときはパケットが送信されていることが分かる。戻り値の各値は次の意味を持つ。
+\begin{itemize}
+\item{icmp_seq}何秒にICMP　echoを送信したか。\\
+\item{ttl}Time To Live の略称で、パケットの生存時間。\\
+\item{time}ICMP　echoを送信してから、応答があるまでにかかった時間。\\
+\end{itemize}
+止めるまで永遠に送信し続けるので、途中でCtrl-Cで中断する必要がある。その後の文章を見るとパケットを5つ送信し、その全てに応答があり、ロスしたパケットは存在しないことが分かる。
+
+\subsection{}
+与えられた2つのURLを開くと同じwebサイトが開く。このことから、webサイトにはドメイン名とIPアドレスいずれでもアクセスすることができることが分かる。
+
+\subsection{}
+nslookupはドメインの情報をDNSサーバに問い合わせて表示するコマンドである。引数としてドメイン名を指定すると、そこからIPアドレスを調べることができ、逆にIPアドレスからドメイン名を調べることもできる。
+
+\begin{verbatim}
+exp183[2]% nslookup www-ise4.sst.osaka-u.ac.jp
+Server:         133.1.240.242
+Address:        133.1.240.242#53
+
+Non-authoritative answer:
+Name:   www-ise4.ist.osaka-u.ac.jp
+Address: 133.1.16.2
+\end{verbatim}
+
+ここで得られたIPアドレス”133.1.16.2”にアクセスすると確かに土屋研究室のwebサイトに飛ぶことが確認できる。逆にIPアドレスを引数として実行すると、以下の実行結果が得られる。
+
+\begin{verbatim}
+exp183[1]% nslookup 133.1.16.2
+Server:         133.1.240.242
+Address:        133.1.240.242#53
+
+Non-authoritative answer:
+2.16.1.133.in-addr.arpa name = cezanne.ics.es.osaka-u.ac.jp.
+
+Authoritative answers can be found from:
+16.1.133.in-addr.arpa   nameserver = ns2.ist.osaka-u.ac.jp.
+16.1.133.in-addr.arpa   nameserver = ns1.ist.osaka-u.ac.jp.
+16.1.133.in-addr.arpa   nameserver = ns3.ist.osaka-u.ac.jp.
+ns1.ist.osaka-u.ac.jp   internet address = 133.1.173.34
+ns2.ist.osaka-u.ac.jp   internet address = 133.1.173.39
+ns3.ist.osaka-u.ac.jp   internet address = 133.1.138.166
+\end{verbatim}
+
+ここで得られたドメイン名”cezanne.ics.es.osaka-u.ac.jp”は前述のドメイン名をは異なるが、実際にアクセスすると、前述のドメイン名と同様に土屋研究室のwebサイトにアクセスできることが確認できた。一つのIPアドレスに複数のドメイン名が設定されているためこの様な異なるドメイン名が表示された。
+
+\section{課題1-2}
+arpコマンドはARPテーブルの表示及び設定を行うコマンドである。今回行ったオプション-aはARPテーブルの表示を行うコマンドである。ARPテーブルとはARPキャッシュの保存されているテーブルである。実行すると以下の結果が得られた。
+
+\begin{verbatim}
+exp088[1]%/usr/sbin/arp -a
+exp088.exp.ics.es.osaka-u.ac.jp (192.168.16.88) at 08:00:27:c4:a5:f7 on em0 permanent [ethernet]
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+cups.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 953 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 659 seconds [ethernet]
+exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201) at 08:00:27:e5:94:ae on em0 expires in 861 seconds [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 952 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1019 seconds [ethernet]
+\end{verbatim}
+
+\subsection{}
+pingを実行した後の出力は以下の用になった。
+\begin{verbatim}
+Script started on Thu Apr 21 11:36:22 2016
+exp183[1]% /sbin/ping exp201
+PING exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201): 56 data bytes
+64 bytes from 192.168.16.201: icmp_seq=0 ttl=64 time=0.882 ms
+64 bytes from 192.168.16.201: icmp_seq=1 ttl=64 time=0.693 ms
+64 bytes from 192.168.16.201: icmp_seq=2 ttl=64 time=0.499 ms
+64 bytes from 192.168.16.201: icmp_seq=3 ttl=64 time=0.293 ms
+^C
+--- exp201.exp.ics.es.osaka-u.ac.jp ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.293/0.592/0.882/0.219 ms
+exp183[2]% /sbin/ping exp201
+PING exp203.exp.ics.es.osaka-u.ac.jp (192.168.16.203): 56 data bytes
+64 bytes from 192.168.16.203: icmp_seq=0 ttl=64 time=0.866 ms
+64 bytes from 192.168.16.203: icmp_seq=1 ttl=64 time=0.669 ms
+64 bytes from 192.168.16.203: icmp_seq=2 ttl=64 time=1.451 ms
+^C
+--- exp203.exp.ics.es.osaka-u.ac.jp ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.669/0.995/1.451/0.332 ms
+exp183[3]% /sbin/ping exp203
+PING exp209.exp.ics.es.osaka-u.ac.jp (192.168.16.209): 56 data bytes
+64 bytes from 192.168.16.209: icmp_seq=0 ttl=64 time=1.591 ms
+64 bytes from 192.168.16.209: icmp_seq=1 ttl=64 time=0.455 ms
+64 bytes from 192.168.16.209: icmp_seq=2 ttl=64 time=0.313 ms
+^C
+--- exp209.exp.ics.es.osaka-u.ac.jp ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.313/0.786/1.591/0.572 ms
+exp183[4]% /usr/sbin/arp -a
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+smb.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 1010 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 696 seconds [ethernet]
+exp209.exp.ics.es.osaka-u.ac.jp (192.168.16.209) at 08:00:27:59:e5:1b on em0 expires in 1186 seconds [ethernet]
+exp183.exp.ics.es.osaka-u.ac.jp (192.168.16.183) at 08:00:27:1c:34:b1 on em0 permanent [ethernet]
+exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201) at 08:00:27:2f:04:c0 on em0 expires in 1175 seconds [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 1009 seconds [ethernet]
+exp203.exp.ics.es.osaka-u.ac.jp (192.168.16.203) at 08:00:27:e4:28:4f on em0 expires in 1181 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1075 seconds [ethernet]
+
+\end{verbatim}
+pingを実行すると、ARPテーブルにping実行の際に指定したホストが追加されていることが分かる。これは、pingは指定したホストに対して、ICMP　echoを送信しているので、ホストとの間で通信が行われ、SRPテーブルにそのホストが追加されたためである。
+
+\subsection{}
+tracerouteは指定したホストまでの経路を表示するコマンドである。実行結果は以下の様になった。
+
+\begin{verbatim}
+exp183[1]% /usr/sbin/traceroute exp201
+traceroute to exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201), 64 hops max, 40 byte packets
+ 1  exp201 (192.168.16.201)  0.354 ms  0.399 ms  0.224 ms
+exp183[2]% /usr/sbin/traceroute exp201 www.ics.es.osaka-u.ac.jp
+traceroute to vm04.ics.es.osaka-u.ac.jp (133.1.240.14), 64 hops max, 40 byte packets
+ 1  * * *
+ 2  icsintsvgw.ics.es.osaka-u.ac.jp (133.1.240.254)  0.845 ms  0.735 ms  0.604 ms
+ 3  icsintgw.ics.es.osaka-u.ac.jp (133.1.240.81)  0.548 ms  0.387 ms  0.2
+\end{verbatim}
+
+tracerouteはttlの値を1から始め、1つづつ増やしながら送信することで、経路全てのホストからICMP　TIME　EXCEEDEDというパケットを受け取り、全経路を表示する。演習室内のホストに対して実行した場合は、直接アクセスできるため、途中のホストは表示されないが、www.ics.es.osaka-u.ac.jpはwebサイトであるので、アクセス経路に複数の存在する。
+
+\subsection{}
+演習室の学生が使うPCはすべて直接つながっており同じサーバー内に存在している。
+
+\subsection{}
+netstatは、ホストのネットワーク接続状態や、ネットワーク東経などを確認するためのコマンドである。演習室で実行すると、以下の実行結果が得られた。
+
+\begin{verbatim}
+exp183[1]% /ust/bin/netstat -r
+Routing tables
+
+Internet:
+Destination        Gateway            Flags      Netif Expire
+default            expgw              UGS         em0
+localhost          link#2             UH          lo0
+192.168.16.0       link#1             U           em0
+exp183             link#1             UHS         lo0
+
+Internet6:
+Destination        Gateway            Flags      Netif Expire
+::                 localhost          UGRS        lo0
+localhost          link#2             UH          lo0
+::ffff:0.0.0.0     localhost          UGRS        lo0
+fe80::             localhost          UGRS        lo0
+fe80::%lo0         link#2             U           lo0
+fe80::1%lo0        link#2             UHS         lo0
+ff01::%lo0         localhost          U           lo0
+ff02::             localhost          UGRS        lo0
+ff02::%lo0         localhost          U           lo0
+\end{verbatim}
+各項目の意味は以下のとおりである。
+\begin{itemize}
+\item{Destination} 目的地\\
+\item{Gateway}
+\item{frags}
+
+
+\subsection{}
+時間をおいて再度arpを実行したところ以下の実行結果が得られた。
+
+\begin{verbatim}
+exp183[1]% /usr/sbin/arp -a
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1152 seconds [ethernet]
+expserv.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 1020 seconds [ethernet]
+exp183.exp.ics.es.osaka-u.ac.jp (192.168.16.183) at 08:00:27:1c:34:b1 on em0 permanent [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 1030 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1096 seconds [ethernet]
+\end{verbatim}
+
+以前実行したときと比べると、pingを実行することで追加された、exp201などが消えていることが分かる。これは、動的に得られたARP情報は一定時間の後に消えるからである。もし、時間経過を待たずに動的に得られたARP情報を削除したい場合は、オプション-dでarpを実行することで、即座に削除することができる。
+
+\section{課題1-3}
+\subsection{}
+システムコールとは、非特権モードで動作するカーネル以外のプログラムが、特権モードで動作するカーネルに対して、仕事を依頼する方法である。システムコールの利点としては、特権モードで動作しているカーネルに仕事を依頼するので、他のプログラムに問題を与えないか限り、非特権モードでは実行できない処理を実行できる点にある。デメリットとしては、プログラムからシステムコールを使うと、カーネルに処理を依頼し、その結果が帰って来るまでプログラムが止まるので、プログラムの処理が遅くなる点にある。ライブラリでは、システムコールを呼ぶことで処理時間があまり遅延しないように、データをキャッシュしたり、処理順をいれかえるなのでの工夫がしてあるが、自作のプログラムではそのような処理を行うことは煩雑であるため、システムコールを直接呼び出すことなくライブラリをそのまま使うことになる。
+
+\subsection{}
+
+\begin{verbatim}
+exp183[1]% truss -c echo hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000023187       1       1
+lseek                   0.000011734       1       0
+mmap                    0.000235784      11       0
+close                   0.000060901       3       0
+fstat                   0.000058108       2       0
+lstat                   0.000165663       6       1
+access                  0.000066768       1       0
+sigprocmask             0.000289422      12       0
+munmap                  0.000113423       6       0
+read                    0.000358146       2       0
+                      ------------- ------- -------
+                        0.001383136      45       2
+exp183[2]% truss -c echo pwd
+/.amd_mnt/home/exp/exp4/k-naitou
+syscall                     seconds   calls  errors
+readlink                0.000021511       1       1
+lseek                   0.000011454       1       0
+mmap                    0.000190529      11       0
+close                   0.000053079       3       0
+fstat                   0.000059784       3       0
+lstat                   0.000148344       6       1
+write                   0.000015365       1       0
+ioctl                   0.000012572       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000449778      12       0
+__getcwd                0.000032965       1       0
+munmap                  0.000093029       5       0
+read                    0.000391950       2       0
+                      ------------- ------- -------
+                        0.001498798      48       2
+exp183[3]% truss -c ls
+#EXreport.txt#                  hatten2.c
+#half_adder.vhd#                hatten2.txt
+#hatten2.c#                     hatten2.txt~
+#kadai2.txt#                    kadai1.txt
+#proD#                          kadai2.txt
+Adder.cr.mti                    kadai3-2.txt
+Adder.mpf                       kadai3.txt
+DFF.vhd                         kadai4.txt
+DFF.vhd.bak                     modelsim
+Desktop                         multi.vhd
+Downloads                       multi.vhd.bak
+Dratch.vhd                      pro-c2014
+Dratch.vhd.bak                  pro-c2015
+EXreport.txt                    proD
+EXreport.txt~                   reportpage.pdf
+FF.cr.mti                       result.html
+FF.mpf                          sml-mode-4.0
+JKFF.vhd                        sml-mode.tar.gz
+JKFF.vhd.bak                    system2
+ProC.pdf                        test.sml
+bin                             test_full_adder.vhd
+expB                            test_full_adder.vhd.bak
+first.sml                       transcript
+first.sml~                      typescript
+hatten2                         updowncount.cr.mti
+hatten2-2                       updowncount.mpf
+hatten2-2.c                     updowncount.vhd
+hatten2-3                       updowncount.vhd.bak
+hatten2-3.c                     vsim.wlf
+hatten2-3.c~                    work
+hatten2-4                       workspace
+hatten2-4.c                     ????若???絵??df
+hatten2-4.c~
+syscall                     seconds   calls  errors
+getuid                  0.000009498       1       0
+readlink                0.000019835       1       1
+lseek                   0.000059783       3       0
+mmap                    0.000498105      21       0
+open                    0.000643376       9       0
+close                   0.000367086      13       0
+fstat                   0.000324343      12       0
+lstat                   0.000408990       6       1
+write                   0.015981639      33       0
+ioctl                   0.000043023       3       0
+access                  0.000079898       3       0
+sigprocmask             0.000595043      20       0
+munmap                  0.000178513       9       0
+read                    0.002286883       8       0
+                      ------------- ------- -------
+                        0.021496015     142       2
+\end{verbatim}
+

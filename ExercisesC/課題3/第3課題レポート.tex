@@ -1,0 +1,141 @@
+\documentclass[a4j]{class}
+\usepackage{moreverb}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{url}
+\usepackage{here}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{pxrubrica}
+\usepackage{fancybox}
+\title{第3回レポート課題} % 課題名
+\author{内藤 圭吾}                      % 提出者名
+\date{2016年7月7日}                     % 提出日
+\担当教員{内山　彰}           % 担当教官名. 
+\所属{ソフトウェア科学コース}           % 自分の所属するコース名などを指定する. 
+\学年{3年}                              % 学年
+\学籍番号{09B14049}                     % 学籍番号
+\email{u434666c@ics.osaka-u.ac.jp}   % 電子メールのアドレス
+\begin{document}
+\maketitle
+\section{課題3-1}
+\subsection{課題内容}
+セマフォを用いて排他制御を実現し、与えられたプログラムfile-counter.cが確実に正しく動作するように改良する。
+正しい動作とは、以下の3条件を満たす動作である。
+\begin{itemize}
+\item{counterファイルの内容が最終的に4になる。}
+
+\item{何度実行しても同じ結果になる。}
+
+\item{file-counterプログラム単体で動作する。}
+\end{itemize}
+
+\subsection{プログラムの仕様}
+引数はなし。制限事項はなし。
+
+\subsection{実行結果}
+\includegraphics[width  = 15cm]{file_counter}
+
+\subsection{考察}
+今回は排他制御をセマフォを用いて実装したが、今回の課題では、ファイルのロック機能を用いることで、排他制御を行い、課題を実装することもできる。ファイルのロックは<sys/file.h>ライブラリの、flock関数で行うことができる。flock関数は第一引数にファイルディスクリプタ、第二引数にどの操作を行うかを表すoperationを取る。flock関数が行うことのできる操作は以下の3つがある。
+\begin{itemize}
+\item{LOCK\_SH : 共有ロックを適用する。}
+\item{LOCK\_EX : 排他ロックを適用する。}
+\item{LOCK\_UN : このプロセスの保持している既存のロックを解除する。}
+\end{itemize}
+共有ロックは、他のプロセスからそのファイルを参照することはできるが、変更することはできない。排他ロックは、他のプロセスからはファイルの参照も変更もできない。今回の場合、排他ロックを行うことで、セマフォを用いた場合と同様の動作をすることができる。
+
+\section{課題3-2-1}
+\subsection{課題内容}
+pipe.cを拡張し、双方向双方向パイプのプログラムtwo-way-pipe.cを作成する。
+
+\subsection{プログラムの仕様}
+第一引数に子プロセスから親プロセスへのメッセージ、第二引数に親プロセスから子プロセスへのメッセージを指定する。メッセージは256文字以下に制限している。
+
+\subsection{実行結果}
+\includegraphics[width  = 15cm]{two_way_pipe}
+	
+\subsection{考察}
+今回メッセージの文字数が256文字以下に制限されているが、これは入力された文字列を格納する配列bufのサイズが256であることに起因している。したがって、bufのサイズを変更するだけで、文字数の制限をあげることができる。しかし、後述するがpipeのバッファには8192bitが上限と言う制限があるので、文字数は文字列送信アルゴリズムを課題3-2-2後半の工夫を施さなければ、8192文字以上の送信はできない。
+
+
+\section{課題3-2-2}
+\subsection{課題内容}
+mergesort.cを拡張し、並列版のマージソートを行うプログラムを作成する。
+
+\subsection{プログラムの仕様}
+引数なしで実行すると、ランダムに生成された数値がソートされて標準出力に表示される。
+
+\subsection{実行結果}
+\begin{figure}[H]
+\begin{tabular}{c}
+\begin{minipage}{0.33\hsize}
+\includegraphics[height  = 10cm]{mergesort1}
+\caption{要素数40での実行結果}
+\end{minipage}
+
+\begin{minipage}{0.33\hsize}
+\includegraphics[height  = 10cm]{mergesort2}
+\caption{要素数40000での実行結果(最小値付近)}
+\end{minipage}
+
+\begin{minipage}{0.33\hsize}
+\includegraphics[height  = 10cm]{mergesort3}
+\caption{要素数40000での実行結果(最大値付近)}
+\end{minipage}
+\end{tabular}
+\end{figure}
+
+\subsection{考察}
+今回、pipeで一度にマージソートした数値を親プロセスに送信していた場合、配列サイズが大きくなった場合、プログラムが途中で停止し、ソートを完了することができない。これは、pipeで送信する際、pipeに渡した値は一度バッファに溜められ、read関数で、そのバッファから読み出される。このpipeのバッファは8192byteであり、それ以上のサイズをバッファに溜めようとすると、バッファがあふれ、read関数でバッファに空きができるまで、動作がブロックされる事が原因である。なので、あまりに大きなサイズのデータを一度にpipeに渡すと処理できずに動作がとまってしまう。
+
+
+\section{課題3-3-1}
+\subsection{課題内容}
+alarm関数を使用せずに、同等の機能を実現する関数myalarmをマルチプロセスを用いて実装する。
+
+\subsection{プログラムの仕様}
+最後の入力から10秒経過でプログラムが終了する。制限はなし。
+
+\subsection{実行結果}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width  = 10cm]{myalarm}
+\end{figure}
+
+\subsection{考察}
+今回、以前のmyalarm関数の呼び出しで作られた子プロセスを殺すためにstatic変数を用いた。これにより、以前作られた子プロセスのプロセスIDを格納し、次以降の呼び出しで殺すことができた。これ以外の実現方法としては、子プロセスが終了や一時停止した際に発生するシグナル、SIGCHLDを用いるものが考えられる。
+
+
+\section{課題3-3-2}
+\subsection{課題内容}
+myalarm関数を利用して、課題2で作成したsimple-talk-client.cにタイムアウト機能を実装する。この機能は以下の仕様を満たすこと。
+
+\begin{itemize}
+\item{一定時間入出力が無い場合、メッセージを出力してプログラムを終了する。}
+
+\item{シグナルハンドラ内では、非同期安全な関数のみを利用する。}
+
+\item{プログラムを終了する前に、ソケットを閉じるなど、必要な後処理をした後プログラムを終了すること。}	
+\end{itemize}
+
+\subsection{プログラムの仕様}
+上記の仕様を満たしている。引数は接続先の端末名。
+
+\subsection{実行結果}
+\begin{figure}[H]
+\includegraphics[width  = 15cm]{simple_talk_client}
+\end{figure}
+
+
+\subsection{考察}
+今回シグナルハンドラ内で、非同期安全な関数のみを用いる、と言う制限があったが、この理由は、シグナルハンドラ内で非同期安全でない関数を呼び出すと、脆弱性の原因となるからである。そもそも、非同期安全な関数とは、割り込まれている操作を妨げないことが保障されている関数である。つまり、非同期安全でない関数が、割り込み処理を記述するシグナルハンドラに用いられていた場合、割り込み処理を行うことで、もとの操作が損なわれる可能性がある。元の操作が損なわれる例として、課題3-3-1でシグナルハンドラ内で用いられていたprintf関数の場合を考える。元のmain関数でprintf関数を呼び出している時に、シグナルが発生し、そのシグナルハンドラ内にもprintf関数が書かれていたとする。その場合、2つのprintfの出力が混ざり合ってしまう。この問題を解決する方法として、排他制御が考えられる。しかし、この場合排他制御を行おうとすると、デッドロックが発生してしまう。そのため、割り込み処理を記述するシグナルハンドラ内には、元の処理の操作を妨げないことが保障されている非同期安全な関数のみを用いることが必要である。そこで、今回は非同期安全でないprintf関数の代わりに、非同期安全であるwrite関数で置き換えることで対処した。\\
+
+\section{感想}
+他の講義でも、セマフォを用いた排他制御は学んでいたが、実際にその実装を行ってみるとセマフォに対する理解がよりいっそう深まった。また、前回の課題も含めて、マルチプロセスプログラミングへの理解も少しずつ進んだ。今回はシグナルに対応した動作を変更する課題があったが、これは様々な応用方法があるように感じた。今回も大変身になる課題であった。
+
+\begin{thebibliography}{9}
+\bibitem{oracle}Oracleマニュアル \url{https://docs.oracle.com/cd/E19683-01/816-3976/gen-26/}
+
+\end{thebibliography}
+\end{document}

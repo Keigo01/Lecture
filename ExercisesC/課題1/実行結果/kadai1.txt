@@ -1,0 +1,39 @@
+Script started on Thu Apr 14 13:12:17 2016
+$ ping exp 101
+PING exp101.exp.ics.es.osaka-u.ac.jp (192.168.16.101): 56 data bytes
+ping: sendto: Host is down
+ping: sendto: Host is down
+^C
+--- exp101.exp.ics.es.osaka-u.ac.jp ping statistics ---
+7 packets transmitted, 0 packets received, 100.0% packet loss
+$ ping exp101[K[K[K201
+PING exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201): 56 data bytes
+64 bytes from 192.168.16.201: icmp_seq=0 ttl=64 time=1.012 ms
+64 bytes from 192.168.16.201: icmp_seq=1 ttl=64 time=0.402 ms
+64 bytes from 192.168.16.201: icmp_seq=2 ttl=64 time=0.647 ms
+64 bytes from 192.168.16.201: icmp_seq=3 ttl=64 time=0.431 ms
+64 bytes from 192.168.16.201: icmp_seq=4 ttl=64 time=0.415 ms
+^C
+--- exp201.exp.ics.es.osaka-u.ac.jp ping statistics ---
+5 packets transmitted, 5 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.402/0.581/1.012/0.233 ms
+$ /usr/bin/drill http://www-ise.ist/[K.osaka-u.ac.jp/
+;; ->>HEADER<<- opcode: QUERY, rcode: NXDOMAIN, id: 59708
+;; flags: qr rd ra ; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 0 
+;; QUESTION SECTION:
+;; http://www-ise.ist.osaka-u.ac.jp/.	IN	A
+
+;; ANSWER SECTION:
+
+;; AUTHORITY SECTION:
+.	10800	IN	SOA	a.root-servers.net. nstld.verisign-grs.com. 2016041301 1800 900 604800 86400
+
+;; ADDITIONAL SECTION:
+
+;; Query time: 5 msec
+;; SERVER: 133.1.240.215
+;; WHEN: Thu Apr 14 13:14:03 2016
+;; MSG SIZE  rcvd: 126
+$ e[Kexit
+
+Script done on Thu Apr 14 13:14:10 2016

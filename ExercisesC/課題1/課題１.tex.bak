@@ -1,0 +1,732 @@
+\documentclass[a4j]{class}
+\usepackage{moreverb}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{url}
+\usepackage{here}
+\usepackage{listings}
+
+\title{課題1} % 課題名
+\author{内藤　圭吾}                      % 提出者名
+\date{2016年1月7日}                     % 提出日
+\担当教員{内山　彰}           % 担当教官名. 
+\所属{ソフトウェア科学コース}           % 自分の所属するコース名などを指定する. 
+\学年{3年}                              % 学年
+\学籍番号{09B14049}                     % 学籍番号
+\email{u434666c@ics.osaka-u.ac.jp}   % 電子メールのアドレス
+
+\begin{document}
+\maketitle
+\section{課題1-1}
+\subsection{}
+pingコマンドは引数として渡されたホスト名またはIPアドレスとのパケットの送受信ができるかどうかを調べることができるコマンドである。演習室のPCで実行したところ以下の結果が得られた。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+$ ping exp101
+PING exp101.exp.ics.es.osaka-u.ac.jp (192.168.16.101): 56 data bytes
+ping: sendto: Host is down
+ping: sendto: Host is down
+--- exp101.exp.ics.es.osaka-u.ac.jp ping statistics ---
+7 packets transmitted, 0 packets received, 100.0% packet loss
+
+
+$ ping exp101
+PING exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201): 56 data bytes
+64 bytes from 192.168.16.201: icmp_seq=0 ttl=64 time=1.012 ms
+64 bytes from 192.168.16.201: icmp_seq=1 ttl=64 time=0.402 ms
+64 bytes from 192.168.16.201: icmp_seq=2 ttl=64 time=0.647 ms
+64 bytes from 192.168.16.201: icmp_seq=3 ttl=64 time=0.431 ms
+64 bytes from 192.168.16.201: icmp_seq=4 ttl=64 time=0.415 ms
+^C
+--- exp201.exp.ics.es.osaka-u.ac.jp ping statistics ---
+5 packets transmitted, 5 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.402/0.581/1.012/0.233 ms
+\end{lstlisting}
+
+pingの引数としてexp101を指定したとき、”Host is down”と帰ってきているので、指定したホストが現在パケットの送受信ができないことを示している。また、引数としてexp201を指定したときはパケットが送信されていることが分かる。戻り値の各値は次の意味を持つ。
+\begin{itemize}
+\item{icmp\_seq}　何秒にICMP echoを送信したか。\\
+\item{ttl}　Time To Live の略称で、パケットの生存時間。\\
+\item{time}　ICMP echoを送信してから、応答があるまでにかかった時間。\\
+\end{itemize}
+止めるまで永遠に送信し続けるので、途中でCtrl-Cで中断する必要がある。その後の文章を見るとパケットを5つ送信し、その全てに応答があり、ロスしたパケットは存在しないことが分かる。
+
+\subsection{}
+与えられた2つのURLを開くと以下のように同じwebサイトが開く。このことから、webサイトにはドメイン名とIPアドレスいずれでもアクセスすることができることが分かる。
+\begin{figure}[H]
+\centering
+\includegraphics[width = 15cm]{higashi1}
+\caption{ドメイン名によるアクセス}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 15cm]{higashi2}
+\caption{IPアドレスによるアクセス}
+\end{figure}
+
+\subsection{}
+nslookupはドメインの情報をDNSサーバ(Domain Name  System　サーバー)に問い合わせて表示するコマンドである。引数としてドメイン名を指定すると、そこからIPアドレスを調べることができ、逆にIPアドレスからドメイン名を調べることもできる。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+exp183[2]% nslookup www-ise4.sst.osaka-u.ac.jp
+Server:         133.1.240.242
+Address:        133.1.240.242#53
+
+Non-authoritative answer:
+Name:   www-ise4.ist.osaka-u.ac.jp
+Address: 133.1.16.2
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 15cm]{tsutiya1}
+\caption{IPアドレスによるアクセス}
+\end{figure}
+
+ここで得られたIPアドレス”133.1.16.2”にアクセスすると確かに土屋研究室のwebサイトに飛ぶことが確認できる。逆にIPアドレスを引数として実行すると、以下の実行結果が得られる。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+exp183[1]% nslookup 133.1.16.2
+Server:         133.1.240.242
+Address:        133.1.240.242#53
+
+Non-authoritative answer:
+2.16.1.133.in-addr.arpa name = cezanne.ics.es.osaka-u.ac.jp.
+
+Authoritative answers can be found from:
+16.1.133.in-addr.arpa   nameserver = ns2.ist.osaka-u.ac.jp.
+16.1.133.in-addr.arpa   nameserver = ns1.ist.osaka-u.ac.jp.
+16.1.133.in-addr.arpa   nameserver = ns3.ist.osaka-u.ac.jp.
+ns1.ist.osaka-u.ac.jp   internet address = 133.1.173.34
+ns2.ist.osaka-u.ac.jp   internet address = 133.1.173.39
+ns3.ist.osaka-u.ac.jp   internet address = 133.1.138.166
+\end{lstlisting}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 15cm]{tsutiya2}
+\caption{ドメイン名によるアクセス}
+\end{figure}
+
+ここで得られたドメイン名”cezanne.ics.es.osaka-u.ac.jp”は課題のドメイン名をは異なるが、実際にアクセスすると、前述のドメイン名と同様に土屋研究室のwebサイトにアクセスできることが確認できた。一つのIPアドレスに複数のドメイン名が設定されているためこの様な異なるドメイン名が表示された。
+
+以上のことより、1では出力に現れた数字の列はIPアドレスであり、2のように、ホスト名、IPアドレスいずれからでもそのホストにアクセスできることが分かる。
+
+\section{課題1-2}
+\subsection{}
+arpコマンドはARPテーブルの表示及び設定を行うコマンドである。今回行ったオプション-aはARPテーブルの表示を行うコマンドである。ARPテーブルとはARPキャッシュの保存されているテーブルである。ARPは、IPアドレスからEthernetのMACアドレスの情報を得られるプロトコルである。実行すると以下の結果が得られた。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true]
+exp088[1]%/usr/sbin/arp -a
+exp088.exp.ics.es.osaka-u.ac.jp (192.168.16.88) at 08:00:27:c4:a5:f7 on em0 permanent [ethernet]
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+cups.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 953 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 659 seconds [ethernet]
+exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201) at 08:00:27:e5:94:ae on em0 expires in 861 seconds [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 952 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1019 seconds [ethernet]
+\\end{lstlisting}
+
+\subsection{}
+pingを実行した後の出力は以下の用になった。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true]
+Script started on Thu Apr 21 11:36:22 2016
+exp183[1]% /sbin/ping exp201
+PING exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201): 56 data bytes
+64 bytes from 192.168.16.201: icmp_seq=0 ttl=64 time=0.882 ms
+64 bytes from 192.168.16.201: icmp_seq=1 ttl=64 time=0.693 ms
+64 bytes from 192.168.16.201: icmp_seq=2 ttl=64 time=0.499 ms
+64 bytes from 192.168.16.201: icmp_seq=3 ttl=64 time=0.293 ms
+^C
+--- exp201.exp.ics.es.osaka-u.ac.jp ping statistics ---
+4 packets transmitted, 4 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.293/0.592/0.882/0.219 ms
+exp183[2]% /sbin/ping exp201
+PING exp203.exp.ics.es.osaka-u.ac.jp (192.168.16.203): 56 data bytes
+64 bytes from 192.168.16.203: icmp_seq=0 ttl=64 time=0.866 ms
+64 bytes from 192.168.16.203: icmp_seq=1 ttl=64 time=0.669 ms
+64 bytes from 192.168.16.203: icmp_seq=2 ttl=64 time=1.451 ms
+^C
+--- exp203.exp.ics.es.osaka-u.ac.jp ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.669/0.995/1.451/0.332 ms
+exp183[3]% /sbin/ping exp203
+PING exp209.exp.ics.es.osaka-u.ac.jp (192.168.16.209): 56 data bytes
+64 bytes from 192.168.16.209: icmp_seq=0 ttl=64 time=1.591 ms
+64 bytes from 192.168.16.209: icmp_seq=1 ttl=64 time=0.455 ms
+64 bytes from 192.168.16.209: icmp_seq=2 ttl=64 time=0.313 ms
+^C
+--- exp209.exp.ics.es.osaka-u.ac.jp ping statistics ---
+3 packets transmitted, 3 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.313/0.786/1.591/0.572 ms
+exp183[4]% /usr/sbin/arp -a
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+smb.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 1010 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 696 seconds [ethernet]
+exp209.exp.ics.es.osaka-u.ac.jp (192.168.16.209) at 08:00:27:59:e5:1b on em0 expires in 1186 seconds [ethernet]
+exp183.exp.ics.es.osaka-u.ac.jp (192.168.16.183) at 08:00:27:1c:34:b1 on em0 permanent [ethernet]
+exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201) at 08:00:27:2f:04:c0 on em0 expires in 1175 seconds [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 1009 seconds [ethernet]
+exp203.exp.ics.es.osaka-u.ac.jp (192.168.16.203) at 08:00:27:e4:28:4f on em0 expires in 1181 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1075 seconds [ethernet]
+
+\\end{lstlisting}
+出力の意味は前述の通りである。\\
+pingを実行すると、ARPテーブルにping実行の際に指定したホストが追加されていることが分かる。これは、pingは指定したホストに対して、ICMP　echoを送信しているので、ホストとの間で通信が行われ、ARPテーブルにそのホストが追加されたためである。
+
+\subsection{}
+tracerouteは指定したホストまでの経路を表示するコマンドである。実行結果は以下の様になった。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+exp183[1]% /usr/sbin/traceroute exp201
+traceroute to exp201.exp.ics.es.osaka-u.ac.jp (192.168.16.201), 64 hops max, 40 byte packets
+ 1  exp201 (192.168.16.201)  0.354 ms  0.399 ms  0.224 ms
+exp183[2]% /usr/sbin/traceroute exp201 www.ics.es.osaka-u.ac.jp
+traceroute to vm04.ics.es.osaka-u.ac.jp (133.1.240.14), 64 hops max, 40 byte packets
+ 1  * * *
+ 2  icsintsvgw.ics.es.osaka-u.ac.jp (133.1.240.254)  0.845 ms  0.735 ms  0.604 ms
+ 3  icsintgw.ics.es.osaka-u.ac.jp (133.1.240.81)  0.548 ms  0.387 ms  0.2
+\end{lstlisting}
+
+tracerouteはttlの値を1から始め、1つづつ増やしながら送信することで、経路全てのホストから,
+パケットが消滅した際に発生する、ICMP　TIME　EXCEEDEDというパケットを受け取ることで全経路を表示する。演習室内のホストに対して実行した場合は、直接アクセスできるため、途中のホストは表示されないが、www.ics.es.osaka-u.ac.jpはwebサイトであるので、アクセス経路に複数の存在する。出力は左から、ドメイン名、IPアドレス、3回送信した際の往復に掛かった時間、となっている。
+
+\subsection{}
+演習室の学生が使うPCはすべて同じサーバー内に存在している仮想計算機である。
+
+\subsection{}
+netstatは、ホストのネットワーク接続状態や、ネットワーク統計などを確認するためのコマンドである。演習室で実行すると、以下の実行結果が得られた。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+exp183[1]% /ust/bin/netstat -r
+Routing tables
+
+Internet:
+Destination        Gateway            Flags      Netif Expire
+default            expgw              UGS         em0
+localhost          link#2             UH          lo0
+192.168.16.0       link#1             U           em0
+exp183             link#1             UHS         lo0
+
+Internet6:
+Destination        Gateway            Flags      Netif Expire
+::                 localhost          UGRS        lo0
+localhost          link#2             UH          lo0
+::ffff:0.0.0.0     localhost          UGRS        lo0
+fe80::             localhost          UGRS        lo0
+fe80::%lo0         link#2             U           lo0
+fe80::1%lo0        link#2             UHS         lo0
+ff01::%lo0         localhost          U           lo0
+ff02::             localhost          UGRS        lo0
+ff02::%lo0         localhost          U           lo0
+\end{lstlisting}
+Destinationは宛先のIPアドレス、Gatewayはゲートウェイとなっているホスト名、Netifはインターフェース、 Expireはその経路の有効期限、Flagsはその経路の特性で、各記号は以下の意味を持つ。
+\begin{itemize}
+\item U : 有効
+\item H : ホスト
+\item G : ゲートウェイ
+\item R : 回復される動的な経路
+\item S : 手動で追加された経路
+\end{itemize}
+また、::はその間のアドレスは全て0であることを示す。インターフェースのem0はFreeBSDで用いられるインターフェース、lo0はループバックアドレスは自分自身を指す。またlocalhostも自分自身を指している。このことから、出力を確認すると、自分自身以外へのネットワークはdefaultと、192.168.16.0だけであることが分かる。defaultはローカルシステムからリモートシステムへアクセスする際、既知のパス全てが使えない場合に、外部へ直接接続されているものである。よって、外部へのネットワークは192.168.16.0 だけである。自分の想像したネットワーク構成との関係性として、唯一の外部へのネットワークである、192.168.16.0 が演習室の仮想計算機を構成しているサーバであることが考えられる。
+
+
+\subsection{}
+時間をおいて再度arpを実行したところ以下の実行結果が得られた。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true]
+exp183[1]% /usr/sbin/arp -a
+dbs.exp.ics.es.osaka-u.ac.jp (192.168.16.252) at 00:21:28:ca:95:0a on em0 expires in 1152 seconds [ethernet]
+expserv.exp.ics.es.osaka-u.ac.jp (192.168.16.253) at 00:21:28:ca:95:0a on em0 expires in 1200 seconds [ethernet]
+expgw.exp.ics.es.osaka-u.ac.jp (192.168.16.254) at 5c:dd:70:0c:22:7d on em0 expires in 1020 seconds [ethernet]
+exp183.exp.ics.es.osaka-u.ac.jp (192.168.16.183) at 08:00:27:1c:34:b1 on em0 permanent [ethernet]
+ldap1.exp.ics.es.osaka-u.ac.jp (192.168.16.234) at 00:21:28:ca:95:0a on em0 expires in 1030 seconds [ethernet]
+ldap2.exp.ics.es.osaka-u.ac.jp (192.168.16.235) at 00:21:28:ca:8c:da on em0 expires in 1096 seconds [ethernet]
+\end{lstlisting}
+
+以前実行したときと比べると、pingを実行することで追加された、exp201などが消えていることが分かる。これは、動的に得られたARP情報は一定時間の後に消えるからである。もし、時間経過を待たずに動的に得られたARP情報を削除したい場合は、オプション-dでarpを実行することで、即座に削除することができる。
+
+\section{課題1-3}
+\subsection{}
+システムコールとは、非特権モードで動作するカーネル以外のプログラムが、特権モードで動作するカーネルに対して、仕事を依頼する方法である。システムコールの利点としては、特権モードで動作しているカーネルに仕事を依頼するので、他のプログラムに問題を与えない限り、非特権モードでは実行できない処理を実行できる点にある。デメリットとしては、プログラムからシステムコールを使うと、カーネルに処理を依頼し、その結果が帰って来るまでプログラムが止まるので、プログラムの処理が遅くなる点にある。ライブラリでは、システムコールを呼ぶことで処理時間があまり遅延しないように、データをキャッシュしたり、処理順をいれかえるなのでの工夫がしてあるが、自作のプログラムではそのような処理を行うことは煩雑であるため、システムコールを直接呼び出すことなくライブラリをそのまま使うことになる。
+
+\subsection{}
+trussコマンドは、引数として渡したプログラムが実行するシステムコールや、受け取ったシグナルなどを表示するコマンドである。
+echo、pwd、lsを引数にtruss -cを実行すると、以下の出力結果得る。
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single]
+exp183[1]% truss -c echo hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000023187       1       1
+lseek                   0.000011734       1       0
+mmap                    0.000235784      11       0
+close                   0.000060901       3       0
+fstat                   0.000058108       2       0
+lstat                   0.000165663       6       1
+access                  0.000066768       1       0
+sigprocmask             0.000289422      12       0
+munmap                  0.000113423       6       0
+read                    0.000358146       2       0
+                      ------------- ------- -------
+                        0.001383136      45       2
+exp183[2]% truss -c echo pwd
+/.amd_mnt/home/exp/exp4/k-naitou
+syscall                     seconds   calls  errors
+readlink                0.000021511       1       1
+lseek                   0.000011454       1       0
+mmap                    0.000190529      11       0
+close                   0.000053079       3       0
+fstat                   0.000059784       3       0
+lstat                   0.000148344       6       1
+write                   0.000015365       1       0
+ioctl                   0.000012572       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000449778      12       0
+__getcwd                0.000032965       1       0
+munmap                  0.000093029       5       0
+read                    0.000391950       2       0
+                      ------------- ------- -------
+                        0.001498798      48       2
+exp183[3]% truss -c ls
+#EXreport.txt#                  hatten2.c
+#half_adder.vhd#                hatten2.txt
+#hatten2.c#                     hatten2.txt~
+#kadai2.txt#                    kadai1.txt
+#proD#                          kadai2.txt
+Adder.cr.mti                    kadai3-2.txt
+Adder.mpf                       kadai3.txt
+DFF.vhd                         kadai4.txt
+DFF.vhd.bak                     modelsim
+Desktop                         multi.vhd
+Downloads                       multi.vhd.bak
+Dratch.vhd                      pro-c2014
+Dratch.vhd.bak                  pro-c2015
+EXreport.txt                    proD
+EXreport.txt~                   reportpage.pdf
+FF.cr.mti                       result.html
+FF.mpf                          sml-mode-4.0
+JKFF.vhd                        sml-mode.tar.gz
+JKFF.vhd.bak                    system2
+ProC.pdf                        test.sml
+bin                             test_full_adder.vhd
+expB                            test_full_adder.vhd.bak
+first.sml                       transcript
+first.sml~                      typescript
+hatten2                         updowncount.cr.mti
+hatten2-2                       updowncount.mpf
+hatten2-2.c                     updowncount.vhd
+hatten2-3                       updowncount.vhd.bak
+hatten2-3.c                     vsim.wlf
+hatten2-3.c~                    work
+hatten2-4                       workspace
+hatten2-4.c                     ????若???絵??df
+hatten2-4.c~
+syscall                     seconds   calls  errors
+getuid                  0.000009498       1       0
+readlink                0.000019835       1       1
+lseek                   0.000059783       3       0
+mmap                    0.000498105      21       0
+open                    0.000643376       9       0
+close                   0.000367086      13       0
+fstat                   0.000324343      12       0
+lstat                   0.000408990       6       1
+write                   0.015981639      33       0
+ioctl                   0.000043023       3       0
+access                  0.000079898       3       0
+sigprocmask             0.000595043      20       0
+munmap                  0.000178513       9       0
+read                    0.002286883       8       0
+                      ------------- ------- -------
+                        0.021496015     142       2
+\end{lstlisting}
+左列の文字列はシステムコール、右列secondは実行時間、callsは実行回数、errorsはエラー回数である。
+
+\section{発展課題}
+\subsection{}
+\subsubsection{telnet}
+telnetはネットワークを介して、他のホストコンピュータへアクセスするためのコマンドである。使い方は、引数にホスト名を指定して実行するか、telnetコマンドを実行した後に、openコマンドを引数にホスト名を指定して実行するかの二通りの使い方がある。現在のセッションを終了するにはcloseコマンド、telnetごと終了するにはquitコマンドを使用する。
+
+\subsubsection{srh}
+srhコマンドはネットワークで接続されたリモートホスト上でコマンドを実行するためのコマンドである。rsh　ホスト名　コマンド　の順に引数を指定することで実行することができる。このコマンドを実行するには、リモートホスト上にローカルホストと同じユーザーが存在しているか、リモートホストの側でほかのユーザーのコマンドの実行を許可している必要がある。
+
+\subsubsection{ftp}
+ftpコマンドはFTP(File Transfer Protocol)を利用してファイルの転送を行うコマンドである。ホスト名またはIPアドレスを引数に指定して実行することでそのホストに接続し、引数なしで実行することで、ftpの内部コマンドモードに移行する。そこで、getコマンドやputコマンドを実行することでファイルの送受信ができる。ホストからの切断にはcloseコマンド、ftp内部コマンドモードの終了にはbye、quitコマンドを使用する。
+
+\subsubsection{finger}
+fingerコマンドはユーザー情報を表示するコマンドである。引数にユーザー名を指定することで、ユーザー情報の表示ができる。
+
+\subsubsection{talk}
+talkコマンドは他のユーザーと会話するためのコマンドである。引数にユーザー名を指定することによって、端末上で、他のユーザーとの会話ができる。
+
+\subsection{}
+それぞれの実行結果は以下のようになった。
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true,caption = 改行なし、fwrite]
+Script started on Thu Apr 14 14:11:19 2016
+exp088[1]\%truss -c ./hatten2
+
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     
+　　　　　　　　　　　　seconds   calls  errors
+readlink                0.000020952       1       1
+lseek                   0.000011733       1       0
+mmap                    0.000343898      11       0
+close                   0.000059784       3       0
+fstat                   0.000049168       3       0
+lstat                   0.000143593       6       1
+write                   0.000363454       1       0
+ioctl                   0.000012851       1       0
+access                  0.000018717       1       0
+sigprocmask             0.000212036      12       0
+munmap                  0.000135493       6       0
+read                    0.000364012       2       0
+                      ------------- ------- -------
+                        0.001735691      48       2
+\end{lstlisting}                       
+ 
+ \begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true,caption = 改行あり、fwrite]
+exp088[2]\%truss -c ./hatten2-2
+
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                     seconds   calls  errors
+readlink                0.000022070       1       1
+lseek                   0.000011174       1       0
+mmap                    0.000277409      11       0
+close                   0.000054196       3       0
+fstat                   0.000067327       3       0
+lstat                   0.000150298       6       1
+write                   0.043763662     100       0
+ioctl                   0.000013409       1       0
+access                  0.000018438       1       0
+sigprocmask             0.000270428      12       0
+munmap                  0.000088280       6       0
+read                    0.000383010       2       0
+                      ------------- ------- -------
+                        0.045119701     147       2
+\end{lstlisting}
+                        
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true,caption = 改行なし、write]
+exp088[3]\% truss -c ./hatten2-3
+
+hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellosyscall                     
+                        seconds   calls  errors
+readlink                0.000026819       1       1
+lseek                   0.000014807       1       0
+mmap                    0.000176000      10       0
+close                   0.000053637       3       0
+fstat                   0.000038551       2       0
+lstat                   0.000146109       6       1
+write                   0.013855122     100       0
+access                  0.000018438       1       0
+sigprocmask             0.000367364      12       0
+munmap                  0.000086604       6       0
+read                    0.000412622       2       0
+                      ------------- ------- -------
+                        0.015196073     144       2
+\end{lstlisting}
+                        
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,breaklines = true,caption = 改行あり、write]
+exp088[4]\% truss -c ./hatten2-4
+
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+hello
+syscall                  seconds   calls  errors
+readlink             0.000022350       1       1
+lseek                0.000012013       1       0
+mmap                 0.000177959      10       0
+close                0.000056153       3       0
+fstat                0.000051123       2       0
+lstat                0.000171531       6       1
+write                0.006791093     100       0
+access               0.000019276       1       0
+sigprocmask          0.000296407      12       0
+munmap               0.000129905       6       0
+read                 0.000381613       2       0
+                      ------------- ------- -------
+                        0.008109423     144       2
+\end{lstlisting}
+
+ここで、それぞれシステムコール呼び出しの部分だけ抜き出し、write、fwriteの違いを確認する。\\
+\begin{figure}[H]
+\begin{minipage}{0.5\hsize}
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,caption = 改行なし、fwrite]
+readlink            0.000020952       1       1
+lseek               0.000011733       1       0
+mmap                0.000343898      11       0
+close               0.000059784       3       0
+fstat               0.000049168       3       0
+lstat               0.000143593       6       1
+write               0.000363454       1       0
+ioctl               0.000012851       1       0
+access              0.000018717       1       0
+sigprocmask         0.000212036      12       0
+munmap              0.000135493       6       0
+read                0.000364012       2       0
+                  ------------- ------- -------
+                    0.001735691      48       2
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{0.5\hsize}
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,caption = 改行なし、write]
+readlink            0.000026819       1       1
+lseek               0.000014807       1       0
+mmap                0.000176000      10       0
+close               0.000053637       3       0
+fstat               0.000038551       2       0
+lstat               0.000146109       6       1
+write               0.013855122     100       0
+access              0.000018438       1       0
+sigprocmask         0.000367364      12       0
+munmap              0.000086604       6       0
+read                0.000412622       2       0
+                  ------------- ------- -------
+                    0.015196073     144       2
+\end{lstlisting}
+\end{minipage}
+\end{figure}
+
+
+\begin{minipage}{0.5\hsize}
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,caption = 改行あり、fwrite]
+readlink            0.000022070       1       1
+lseek               0.000011174       1       0
+mmap                0.000277409      11       0
+close               0.000054196       3       0
+fstat               0.000067327       3       0
+lstat               0.000150298       6       1
+write               0.043763662     100       0
+ioctl               0.000013409       1       0
+access              0.000018438       1       0
+sigprocmask         0.000270428      12       0
+munmap              0.000088280       6       0
+read                0.000383010       2       0
+                  ------------- ------- -------
+                    0.045119701     147       2
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{0.5\hsize}
+\centering
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize, frame=single,caption = 改行あり、write]
+readlink            0.000022350       1       1
+lseek               0.000012013       1       0
+mmap                0.000177959      10       0
+close               0.000056153       3       0
+fstat               0.000051123       2       0
+lstat               0.000171531       6       1
+write               0.006791093     100       0
+access              0.000019276       1       0
+sigprocmask         0.000296407      12       0
+munmap              0.000129905       6       0
+read                0.000381613       2       0
+                  ------------- ------- -------
+                    0.008109423     144       2
+\end{lstlisting}
+\end{minipage}
+
+比較すると、改行なしのfwrite以外はwriteを100回呼び出しているが、改行なしのfwriteは1回となっている。これは、fwriteがシステムコールを呼び出す回数を少なくするための工夫として、改行を待って、改行する際にwriteを呼び出して、一度に書き出していると考えられる。これは、前述の標準ライブラリ関数の、動作を軽くするための工夫である。
+
+\subsection{感想}
+linuxには自分の知らないネットワークに関するコマンドが多数存在し、今回の課題を通して、コマンドに対する理解はもちろんのこと、コマンドの動作を調べる過程で、ネットワークそのものに対する理解も深まり、大変ためになる課題でした。
+
+\end{document}
