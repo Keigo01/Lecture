@@ -1,0 +1,234 @@
+\documentclass[a4j]{class}
+\usepackage{moreverb}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{url}
+\usepackage{here}
+\title{第1回レポート} % 課題名
+\author{内藤 圭吾}                      % 提出者名
+\date{2015年1月28日}                     % 提出日
+\担当教員{石尾　隆}           % 担当教官名. 
+\所属{ソフトウェア科学コース}           % 自分の所属するコース名などを指定する. 
+\学年{2年}                              % 学年
+\学籍番号{09B14049}                     % 学籍番号
+\email{u434666c@ics.osaka-u.ac.jp}   % 電子メールのアドレス
+\begin{document}
+\maketitle
+\section{電卓の外部仕様}
+\subsection{概要}
+受け付ける値域は、被演算数は2桁まで、演算数は1桁で、受け付ける演算は加算と減算である。
+
+\subsection{詳細}
+\begin{itemize}
+\item{加算演算子はA、減算演算子はBを当てている}
+\item{演算結果が3桁になる場合 : 正しく3桁表示}
+\item{被演算子が0から入力された場合 : 演算結果がの頭に0が付加され表示される}
+\end{itemize}	
+
+\section{エラー処理}
+エラーとなる入力が行われた場合、LEDを消灯して初期状態に戻る。
+エラーとなる入力は以下のものがある。
+\begin{itemize}
+\item{仕様を超えた桁数の入力}
+\item{計算結果が負になる入力}
+\item{複数の演算子の入力}
+\item{数値を入力する以前の演算子の入力}
+\end{itemize}
+
+\section{動作例}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+入力&出力\\
+\hline
+\hline
+9 A 2&11\\
+\hline
+10 B 2&8\\
+\hline
+98 A 3&101\\
+\hline
+A&エラー\\
+\hline
+1 A A&エラー\\
+\hline
+111&エラー\\
+\hline
+2 B 3&エラー\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{方針とその影響}
+外部仕様の決定における方針は、開発の簡易さである。実際エラー処理と、全て答えを表示し終わった後の初期状態に戻る処理は、同じ処理をしているので、共通のコードを利用している。また、入力を被演算数2桁以下 + 演算子 + 演算数　の形に限定することで、入力の終了タイミングを考える必要が無く、演算子の入力の後演算数が入力されたタイミングで計算の処理を行っている。
+
+\section{電卓内部の数値表現と演算方法}
+電卓内では数値は各桁ごとにスタックに格納されている。スタックはDS命令で領域を確保して、xレジスタをスタックポインタとして利用している。また、演算子は別の領域OPEに格納している。よって、"19 A 2"と入力された場合、入力直後とその演算後で、スタックは以下の様に変化する。
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+スタックの位置&格納されている値\\
+\hline
+\hline
+2&2\\
+\hline
+1&9\\
+\hline
+0&1\\
+\hline
+\end{tabular}
+\caption{入力直後 sp = 3}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+スタックの位置&格納されている値\\
+\hline
+\hline
+2&2\\
+\hline
+1&1\\
+\hline
+0&2\\
+\hline
+\end{tabular}
+\caption{演算後 sp = 2}
+\end{table}
+
+演算方法は、数値が各桁ごとにスタックに格納されているので、演算数入力段階で、スタックの上2つの値が、演算数の1桁目の値と、演算数の値となっている。よって、1桁目同士で計算を行い、その計算結果が10を超えるかを確認し、超えた場合はスタックのさらにひとつしたの値(演算数の10の暗い)に1加える。もし、演算数の1桁目の格納されているのがスタックの底で、かつ桁上がりがあった場合はDSで確保した領域CALIのフラグを立てる。結果を表示するときに、CALIフラグが立っていた場合は先にその値を出力することで、3桁目の出力を行う。演算の過程における、スタックの変化は以下の用である。入力は先ほどと同様に"19 A 2"とする。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+スタックの位置&格納されている値\\
+\hline
+\hline
+2&2\\
+\hline
+1&9\\
+\hline
+0&1\\
+\hline
+\end{tabular}
+\caption{入力直後 sp = 3}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+スタックの位置&格納されている値\\
+\hline
+\hline
+2&2\\
+\hline
+1&11\\
+\hline
+0&1\\
+\hline
+\end{tabular}
+\caption{一桁目同士の演算を実行 sp = 2}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+スタックの位置&格納されている値\\
+\hline
+\hline
+2&2\\
+\hline
+1&1\\
+\hline
+0&2\\
+\hline
+\end{tabular}
+\caption{桁上がり処理実行後 sp = 2}
+\end{table}
+
+\section{他の方針との比較}
+今回は開発の容易さを方針としたので、演算方法は各桁ずつ演算を行ったが、演算の実装にはほかにも幾つかの候補があった。
+まずひとつは、入力された値を入力されるたびに10倍しながら足し合わせていき、10進数の値にしスタックに格納する方法。この方法のメリット・デメリットとしては以下のものがあげられる。
+\begin{itemize}
+\item{メリット}
+\begin{itemize}
+\item{乗算・除算の実装が容易}
+\item{入力の制限桁数の変更が容易}
+\end{itemize}
+\item{デメリット}
+\begin{itemize}
+\item{入力のたびに演算を行うので操作が煩雑}
+\item{出力の際に、各桁毎に分解する必要がある}
+\end{itemize}
+\end{itemize}
+
+また、今回実装に利用した各桁での演算を行う方法のメリットデメリットとして以下のものがあげられる。
+\begin{itemize}
+\item{メリット}
+\begin{itemize}
+\item{最低限の機能の実装が容易}
+\item{10進数に変更しないので入出力が容易}
+\end{itemize}
+\item{デメリット}
+\begin{itemize}
+\item{桁数の制限を拡張するのが煩雑}
+\item{乗算の場合桁上がりの数を確かめるために複数回減算を行う必要があるので煩雑}
+\item{除算の実装が困難}
+\end{itemize}
+\end{itemize}
+以上の理由から、機能の拡張を行う場合は入力のたびに10倍していく方法の方がよいと考えられる。
+
+\section{回路図}
+\subsection{課題1}
+以下の図\ref{fig:kadai2-1}は課題1の回路である。プッシュボタン1の出力を行うピンPB1から、プログラムの入力を割り振ったPTA0へと接続する。しかし、プッシュボタンではチャタリングが生じるので、その間でチャタリング防止回路を挟んでいる。
+\begin{table}[H]
+\includegraphics[width = 15cm]{kadai2-1}
+\caption{課題1回路}
+\label{fig:kadai2-1}
+\end{table}
+
+\subsection{課題2}
+課題2の回路図は以下のようになる。
+\begin{table}[H]
+\includegraphics[width = 15cm]{kadai2}
+\caption{課題2回路}
+\label{fig:kadai2}
+\end{table}
+課題2の回路は図\ref{fig:kadai2}から分かるように2つの部分によって構成されている。各部の説明を行う。
+プッシュボタンの入力部は課題1と同じなので説明は割愛する。
+以下の図\ref{fig:kadai2-2}は課題2の出力部である。課題2では次に出力する値を4bitの2進数で出力しているので、それをIC7447で10進数に変換し、その結果を7segLEDに出力している。
+
+\begin{table}[H]
+\includegraphics[width = 15cm]{kadai2-2}
+\caption{課題2回路出力部}
+\label{fig:kadai2-2}
+\end{table}
+
+
+\subsection{課題3}
+課題3の回路図は以下のようになっている。
+\begin{table}[H]
+\includegraphics[width = 15cm]{kadai3}
+\caption{課題3回路図}
+\label{fig:kadai3}
+\end{table}
+課題3のおいても、プッシュボタンの入力及び出力部分は課題2と同じなので、説明は割愛する。
+以下の図\ref{fig:kadai3-3}は数値の入力部である。今回数値の入力にはディップスイッチを利用したので、ディップスイッチの出力ピンであるSW1 1 ～ SW 1 4を、それぞれプログラムで数値入力として設定したPTA0～3に接続した。
+\begin{table}[H]
+\includegraphics[width = 15cm]{kadai3-3}
+\caption{課題3数値入力部}
+\label{fig:kadai3-3}
+\end{table}
+
+\subsection{課題4以降}
+課題4以降は課題3の回路と同じものを利用したので割愛する。
+
+\section{他授業との関連}
+今回の7segLEDを利用した値の出力は、情報科学実験Aで用いたものと同じ構造を利用した。また、スタックを用いた演算は、情報科学基礎でのCASLを用いた電卓の実装で利用したものを使った。
+
+\end{document}
